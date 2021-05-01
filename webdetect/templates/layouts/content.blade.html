@@ -1,0 +1,29 @@
+<div id="page-wrapper">
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="row" id="main" >
+            <div class="col-sm-12 col-md-12 well" id="content">
+                <h2>Detect Object</h2>
+                <center>
+                <video autoplay id=webcam width="600px" height="400px"></video>
+                <script>
+                    var webcam = document.getElementById("webcam");
+                    var onCameraFail = function (e) {
+                        console.log('Camera did not work.', e);
+                    };
+                    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+                    window.URL = window.URL || window.webkitURL;
+                    navigator.getUserMedia({video:true}, function (stream) {
+                        webcam.srcObject = stream;
+                    }, onCameraFail);
+                    navigator.mediaDevices
+                </script>
+                <div style="padding: 10px;"><input type="file" accept="image/*;capture=camera"></div>
+                </center> 
+                
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</div>
