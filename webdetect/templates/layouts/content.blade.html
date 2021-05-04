@@ -3,27 +3,91 @@
         <!-- Page Heading -->
         <div class="row" id="main" >
             <div class="col-sm-12 col-md-12 well" id="content">
-                <h2>Detect Object</h2>
-                <center>
-                <video autoplay id=webcam width="600px" height="400px"></video>
-                <script>
-                    var webcam = document.getElementById("webcam");
-                    var onCameraFail = function (e) {
-                        console.log('Camera did not work.', e);
-                    };
-                    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-                    window.URL = window.URL || window.webkitURL;
-                    navigator.getUserMedia({video:true}, function (stream) {
-                        webcam.srcObject = stream;
-                    }, onCameraFail);
-                    navigator.mediaDevices
-                </script>
-                <div style="padding: 10px;"><input type="file" accept="image/*;capture=camera"></div>
-                </center> 
-                
+                <h2>Detect Object ddd <h1>{{ data }}<h1></h2> 
+                    <center>
+                        <video id="video" width="640" height="480" autoplay></video>
+                        <button id="snap">Snap Photo</button>
+                        <canvas id="canvas" width="640" height="480"></canvas>
+                    <!-- <video autoplay id=webcam width="600px" height="400px"></video> -->
+                        <div style="padding: 10px;"><input type="file" accept="image/*;capture=camera"></div>
+                        <div id="results"></div>
+                    </center> 
             </div>
         </div>
         <!-- /.row -->
     </div>
     <!-- /.container-fluid -->
 </div>
+
+<script type="text/javascript" src="webcamjs/webcam.min.js"></script>
+<script>
+    // Grab elements, create settings, etc.
+    var video = document.getElementById('video');
+    // Elements for taking the snapshot
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var video = document.getElementById('video');
+    // Get access to the camera!
+    if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // Not adding `{ audio: true }` since we only want video now
+        navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+            //video.src = window.URL.createObjectURL(stream);
+            video.srcObject = stream;
+            video.play();
+        });
+    }
+
+   // Trigger photo take
+    document.getElementById("snap").addEventListener("click", function() {
+        img = context.drawImage(video, 0, 0, 640, 480);
+        send_image(img);
+    });
+
+    Webcam.set({
+        width: 350,
+        height: 350,
+        image_format: 'jpeg',
+        jpeg_quality: 90
+    });
+
+    // send_image(img);
+    // console.log("sss");
+    // function takes_snapshot(){
+    //     Webcam.snap(function(data_uri){
+    //         document.getElementById('results').innerHTML = '<img src="'+data_uri+'"/>';
+    //         alert("snap success");
+    //     }).then(function(data_uri) {
+    //         alert("aletrurdd dss");
+    //         // send_image(data_uri);
+    //     }
+           
+    //     );
+    // }
+
+    //function send_photo(img){
+        // var request = new XMLHttpRequest();
+        // request.open('POST', 'http://127.0.0.1:5000/api/working/image-detect', true);
+    function send_image(img) {
+        //console.log(img);
+        fetch('http://127.0.0.1:5000/api/test',
+        {
+            method: 'GET',
+            //credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*"
+               
+            },
+           // body: img
+        }
+        ).then(function(response) {
+            console.log('res');
+            return response.json();
+        })
+        console.log("test sentsss");
+    }
+    
+</script>
+
+
+

@@ -21,8 +21,8 @@ from webdetect import views
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    url(r'^index/$',views.index),
-    url(r'^retrain/$',views.retrain),
+    url(r'^index/$', views.index, name='index'),
+    url(r'^retrain/$',views.retrain, name='retrain'),
 
 ]
 
