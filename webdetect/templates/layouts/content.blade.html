@@ -9,7 +9,7 @@
                         <button id="snap">Snap Photo</button>
                         <canvas id="canvas" width="640" height="480"></canvas>
                     <!-- <video autoplay id=webcam width="600px" height="400px"></video> -->
-                        <div style="padding: 10px;"><input type="file" accept="image/*;capture=camera"></div>
+                        <!-- <div style="padding: 10px;"><input type="file" accept="image/*;capture=camera"></div> -->
                         <div id="results"></div>
                     </center> 
             </div>
@@ -19,7 +19,7 @@
     <!-- /.container-fluid -->
 </div>
 
-<script type="text/javascript" src="webcamjs/webcam.min.js"></script>
+<!-- <script type="text/javascript" src="webcamjs/webcam.min.js"></script> -->
 <script>
     // Grab elements, create settings, etc.
     var video = document.getElementById('video');
@@ -40,7 +40,10 @@
    // Trigger photo take
     document.getElementById("snap").addEventListener("click", function() {
         img = context.drawImage(video, 0, 0, 640, 480);
-        send_image(img);
+        //test();
+        console.log("test test");
+        //send_image(img);
+        uploadImage(img);
     });
 
     Webcam.set({
@@ -63,29 +66,50 @@
            
     //     );
     // }
-
-    //function send_photo(img){
-        // var request = new XMLHttpRequest();
-        // request.open('POST', 'http://127.0.0.1:5000/api/working/image-detect', true);
-    function send_image(img) {
-        //console.log(img);
-        fetch('http://127.0.0.1:5000/api/test',
-        {
-            method: 'GET',
-            //credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*"
-               
-            },
-           // body: img
-        }
-        ).then(function(response) {
-            console.log('res');
-            return response.json();
-        })
-        console.log("test sentsss");
+    function test(){
+        //etch('http://riorocker97.com/api/test')
+        fetch('http://127.0.0.1:5000/api/test')
+        .then(res => res.json())
+        
     }
+    
+
+    // function send_image(img) {
+    //     //console.log(img);
+    //     fetch('http://127.0.0.1:5000/api/working/image-detect',
+    //     {
+    //         method: 'POST',
+    //       //  method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    //         //credentials: 'include',
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //         },
+    //         body: img
+    //     }
+    //     ).then(function(response) {
+    //         console.log('res');
+    //         return response.json();
+    //     }).catch(error => {
+    //         alert('err',error);
+    //     });
+    //     console.log("test sentsss");
+    // }
+    function uploadImage(file) {
+         // add file to FormData object
+        const fd = new FormData();
+        fd.append('avatar', file);
+
+        // send `POST` request
+        fetch('http://127.0.0.1:5000/api/working/image-detect', {
+            method: 'POST',
+            body: fd
+        })
+        .then(res => res.json())
+        .then(json => console.log(json))
+        .catch(err => console.error(err));
+    }
+
+    
     
 </script>
 

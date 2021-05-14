@@ -24,6 +24,11 @@ def content(request):
 # Create your views here.
 def index(request):
     header_str = "Heooll"
+    response = requests.get('http://127.0.0.1:5000/api/test')
+   # transfor the response to json objects
+    todos = response.json()
+
+    print(response ,"ddd")
     # template = loader.get_template('index.html')
     context = {
         'var1' : header_str
@@ -51,3 +56,4 @@ def save_image(request):
 		return HttpResponse('no data')
 
 ### CONNECT API ###
+
