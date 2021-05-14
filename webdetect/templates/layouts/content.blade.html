@@ -97,7 +97,7 @@
     function uploadImage(file) {
          // add file to FormData object
         const fd = new FormData();
-        fd.append('avatar', file);
+        fd.append('image', file);
 
         // send `POST` request
         fetch('http://127.0.0.1:5000/api/working/image-detect', {
