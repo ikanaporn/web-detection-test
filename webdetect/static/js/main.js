@@ -66,15 +66,28 @@ $(document).ready(function() {
         try {
             
             let photo = document.getElementById("browse-button").files[0];
-            console.log(photo)
+            console.log(photo,"=======",typeof(photo))
             let formData = new FormData();
             
             formData.append("image", photo);
             console.log("dta",formData)
-            fetch('http://127.0.0.1:5000/api/working/image-detect', {
+            //fetch('http://127.0.0.1:5000/api/working/image-detect', {
+            fetch('http://riorocker97.com/api/detect', {
                 method: "POST", 
                 body: formData
-            }).then(response => response.json());
+            }).then(response => response.json())
+            .then(json => {
+              console.log("5555555555 respom",json.image);
+              
+             // loadStats(json.image)
+              let img64 = "data:image/png;base64, "+json.image;
+              
+              var newChild = '<img src="data:image/png;base64, ' + json.image+'"'+ '/>';
+              // document.getElementById("detect-result").body.innerHTML = document.write(newChild); 
+              document.getElementById("detect-result").innerHTML = newChild; 
+              
+            });
+            
            }
           catch(err) {
             err.message;
@@ -108,13 +121,19 @@ $(document).ready(function() {
   }
   
   loadStats = function(jsonData) {
+    console.log("loadstat",jsonData)
     switchCard(2);
     var data = JSON.parse(jsonData);
-    if(data["success"] == true){
-      var elem = document.createElement("img");
-      elem.setAttribute('class', "card crop");
-      elem.setAttribute('id', 'img-card-2');
-      elem.src = data['url'];
-      document.getElementById("result-image").appendChild(elem);
-    }
+    // let buff = new Buffer(jsonData, 'base64');
+    // console.log("buff",buff)
+    var elem = document.createElement("img");
+    elem.setAttribute('class', "card crop");
+    elem.setAttribute('id', 'img-card-1');
+    elem.src = data['url'];
+    console.log("elem4",elem)
+    document.getElementById("result-image").appendChild(elem);
+  
   }
+
+  
+
