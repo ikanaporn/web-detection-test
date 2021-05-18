@@ -1,86 +1,23 @@
-<div id="page-wrapper">
-    <div class="container-fluid">
-        <!-- Page Heading -->
-        <div class="row" id="main" >
-            <div class="col-sm-12 col-md-12 well" id="content">
-                <h2>Detect Object ddd <h1>{{ data }}<h1></h2> 
-                    <center>
-                        <video id="video" width="480" height="360" autoplay></video>
-                        <button id="snap">Snap Photo</button>
-                        <canvas id="canvas" width="480" height="360"></canvas>
-                  
-                        <canvas1 id="results"></canvas1>
-                        
-                       
-                        <!-- <div class="container row main-container">
-                            <div class="col s12 dd-container">
-                              <div class="card dd-card">
-                                <div class="card-content black-text file-field">
-                                  <div id="drop-container">
-                                    <i class="material-icons large upload-icon">cloud_upload</i>
-                                    <span class="drag-txt"><b>Drag and drop image here</b></span>
-                                    <span class="or-txt">or</span>
-                                    <form action="#">
-                                      <div class="waves-effect waves-light btn" id="browse-container">
-                                        <span>Browse files</span>
-                                        <input type="file" id="browse-button" accept="image/*">
-                                      </div>
-                                    </form>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                        <div class="col s12 uf-container">
-                            <div class="card uf-card">
-                              <img class="card crop" id="img-card-1" />
-                            </div>
-                            <div class="waves-effect waves-light btn" id="upload-button">
-                              <span>Upload and Detect Image</span>
-                            </div>
-                            <div class="waves-effect waves-light btn" id="go-back">
-                              <span>Go Back</span>
-                            </div>
-                          </div>
-                
-                          <div id="modal1" class="modal">
-                            <div class="modal-content">
-                              <div style="width: 100%; overflow: hidden;">
-                                <div style="width: 100px; float: left;">
-                                  <div class="preloader-wrapper big active">
-                                    <div class="spinner-layer spinner-blue-only">
-                                      <div class="circle-clipper left">
-                                        <div class="circle"></div>
-                                      </div>
-                                      <div class="gap-patch">
-                                        <div class="circle"></div>
-                                      </div>
-                                      <div class="circle-clipper right">
-                                        <div class="circle"></div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div class="loading-text">
-                                  <h5>Loading...</h5>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        <div id="detect-result">
-                          
-                        </div>
-                        <div id="detect-result2">
-                          
-                        </div> -->
-
-                   
-            </div>
-        </div> 
+<center>
+<div class="container-fluid">
+    <div class="row">
+      <center>
+      <div class="col">
+        <video id="video" width="480" height="360" autoplay></video>
+        <br>
+        <center><button id="snap">Snap Photo</button></center>
+      </div>
+      <div class="col">
+        <canvas id="canvas" width="480" height="360"></canvas>
+      </div>
+      <div class="col">
+        <canvas1 id="results"></canvas1>
+        <h3 id="identify-score"></h3>
+      </div>
     </center> 
-        <!-- /.row -->
     </div>
-    <!-- /.container-fluid -->
 </div>
+
 
 <!-- <script type="text/javascript" src="webcamjs/webcam.min.js"></script> -->
 
@@ -131,8 +68,13 @@
 
         .then(json => {
             console.log("5555555555 respom",json.image);
+            console.log("identify_and_conf",json.identify_and_conf)
             var newChild = '<img src="data:image/jpeg;base64,' + json.image+'"'+ '/>';
+            var newIdenConf = '<h3>'+json.identify_and_conf+'</h3>'
             document.getElementById("results").innerHTML = newChild; 
+            document.getElementById("identify-score").innerHTML = newIdenConf; 
+
+
           });
         
             
