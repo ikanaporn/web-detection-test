@@ -5,13 +5,14 @@
             <div class="col-sm-12 col-md-12 well" id="content">
                 <h2>Detect Object ddd <h1>{{ data }}<h1></h2> 
                     <center>
-                        <!-- <video id="video" width="640" height="480" autoplay></video>
+                        <video id="video" width="480" height="360" autoplay></video>
                         <button id="snap">Snap Photo</button>
-                        <canvas id="canvas" width="640" height="480"></canvas>
+                        <canvas id="canvas" width="480" height="360"></canvas>
                   
-                        <canvas1 id="results"></canvas1> -->
+                        <canvas1 id="results"></canvas1>
+                        
                        
-                        <div class="container row main-container">
+                        <!-- <div class="container row main-container">
                             <div class="col s12 dd-container">
                               <div class="card dd-card">
                                 <div class="card-content black-text file-field">
@@ -40,16 +41,7 @@
                               <span>Go Back</span>
                             </div>
                           </div>
-                          <div class="col s12 dt-container">
-                            <div class="card uf-card" id="result-image">
-                            </div>
-                            <div class="waves-effect waves-light btn" id="go-start">
-                              <span>Go Back</span>
-                            </div>
-                          </div>
-
-
-
+                
                           <div id="modal1" class="modal">
                             <div class="modal-content">
                               <div style="width: 100%; overflow: hidden;">
@@ -77,10 +69,10 @@
                         <div id="detect-result">
                           
                         </div>
+                        <div id="detect-result2">
+                          
+                        </div> -->
 
-                        
-
-                              
                    
             </div>
         </div> 
@@ -92,14 +84,16 @@
 
 <!-- <script type="text/javascript" src="webcamjs/webcam.min.js"></script> -->
 
-<!-- 
+
 <script>
     // Grab elements, create settings, etc.
     var video = document.getElementById('video');
     // Elements for taking the snapshot
     var canvas = document.getElementById('canvas');
     var context = canvas.getContext('2d');
+    //window.ctx = canvas.getContext("2d");
     var video = document.getElementById('video');
+    var data = null;
     // Get access to the camera!
     if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         // Not adding { audio: true } since we only want video now
@@ -112,7 +106,55 @@
     }
 
     document.getElementById("snap").addEventListener("click", function() {
-        img = context.drawImage(video, 0, 0, 640, 480);
+        img = context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        var jpegFile = canvas.toDataURL("image/jpeg");
+        var base64 = jpegFile.substring(23);
+        var binary = fixBinary(atob(base64));
+        var blob = new Blob([binary], {type: 'image/jpeg'});
+        // console.log("blobbb",blob);
+        // console.log("fileData",jpegFile);
+
+        var file = new File([blob], "image.png");
+        //console.log("fileee",file);
+        lastMod = lastModified();
+
+        let formData = new FormData();
+        
+        formData.append("image", file );
+        console.log("formData",formData);
+        //fetch('http://127.0.0.1:5000/api/working/image-detect', {
+        fetch('http://riorocker97.com/api/detect', {
+            method: "POST", 
+            body: formData
+        }).then(response => response.json())
+
+        .then(json => {
+            console.log("5555555555 respom",json.image);
+            var newChild = '<img src="data:image/jpeg;base64,' + json.image+'"'+ '/>';
+            document.getElementById("results").innerHTML = newChild; 
+          });
+        
+            
     });
 
-</script> -->
+    function lastModified() {
+      var modiDate = new Date(document.lastModified);
+      var showAs = modiDate.getDate() + "-" + (modiDate.getMonth() + 1) + "-" + modiDate.getFullYear();
+      return showAs
+    }
+
+    function fixBinary (bin) {
+      var length = bin.length;
+      var buf = new ArrayBuffer(length);
+      var arr = new Uint8Array(buf);
+      for (var i = 0; i < length; i++) {
+        arr[i] = bin.charCodeAt(i);
+      }
+      return buf;
+  }
+
+
+   
+
+</script>
