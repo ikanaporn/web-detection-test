@@ -1,3 +1,5 @@
+
+
 <center>
 <div class="container-fluid">
     <div class="row">
@@ -6,6 +8,9 @@
         <video id="video" width="480" height="360" autoplay></video>
         <br>
         <center><button id="snap">Snap Photo</button></center>
+        <progress value="0" max="10" id="progressBar"></progress>
+        
+
       </div>
       <div class="col">
         <canvas id="canvas" width="480" height="360"></canvas>
@@ -28,7 +33,6 @@
     // Elements for taking the snapshot
     var canvas = document.getElementById('canvas');
     var context = canvas.getContext('2d');
-    //window.ctx = canvas.getContext("2d");
     var video = document.getElementById('video');
     var data = null;
     // Get access to the camera!
@@ -43,42 +47,68 @@
     }
 
     document.getElementById("snap").addEventListener("click", function() {
-        img = context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        //img = context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        var jpegFile = canvas.toDataURL("image/jpeg");
-        var base64 = jpegFile.substring(23);
+        var imgFile = canvas.toDataURL("image/jpeg");
+        var img_array = convertDataURIToBinary(imgFile);
+        var img_avg = arrayAverage(img_array);
+        decisionAvgImage(img_avg, imgFile); 
+    });
+
+    var array = [];
+
+    function decisionAvgImage(avg_current, img_file) {
+
+      var avg_older = arrayAverage(array);
+      //console.log("average older",avg_older);
+      var start_period = Math.abs(avg_older - 0.75);
+      var end_period = Math.abs(avg_older + 0.75);
+      //console.log(start_period,end_period);
+      //const end_period = (array[array.length - 2]- 0.5)
+      if ((avg_current >= start_period) && (avg_current <= end_period)) {
+        var timeleft = 10;
+        $(document).ready(function() {
+          $('#snap').click();
+        });
+        console.log("NOOOOOOOOO SNAP TOGETHER")
+      }
+      else {
+        sentImageToDetect(img_file); 
+        console.log("PENDING RESPONSEEEEEEEEE")
+        
+      }
+      array.push(avg_current);
+      console.log("list :",array);
+      
+    }
+
+    function sentImageToDetect(imgFile) {
+
+        var base64 = imgFile.substring(23);
         var binary = fixBinary(atob(base64));
         var blob = new Blob([binary], {type: 'image/jpeg'});
-        // console.log("blobbb",blob);
-        // console.log("fileData",jpegFile);
-
         var file = new File([blob], "image.png");
-        //console.log("fileee",file);
-        lastMod = lastModified();
-
         let formData = new FormData();
         
         formData.append("image", file );
-        console.log("formData",formData);
-        //fetch('http://127.0.0.1:5000/api/working/image-detect', {
-        fetch('http://riorocker97.com/api/detect', {
+        //console.log("formData",formData);
+        fetch('http://127.0.0.1:5000/api/working/image-detect', {
+        //fetch('http://riorocker97.com/api/detect', {
             method: "POST", 
             body: formData
         }).then(response => response.json())
 
         .then(json => {
-            console.log("5555555555 respom",json.image);
-            console.log("identify_and_conf",json.identify_and_conf)
+            // console.log("image res :",json.image);
+            // console.log("identify_and_conf :",json.identify_and_conf)
             var newChild = '<img src="data:image/jpeg;base64,' + json.image+'"'+ '/>';
             var newIdenConf = '<h3>'+json.identify_and_conf+'</h3>'
+            
             document.getElementById("results").innerHTML = newChild; 
             document.getElementById("identify-score").innerHTML = newIdenConf; 
-
-
           });
-        
-            
-    });
+    }
 
     function lastModified() {
       var modiDate = new Date(document.lastModified);
@@ -94,9 +124,64 @@
         arr[i] = bin.charCodeAt(i);
       }
       return buf;
-  }
+    }
 
+    function _base64ToArrayBuffer(base64) {
+      var binary_string = window.atob(base64);
+      var len = binary_string.length;
+      var bytes = new Uint8Array(len);
+      for (var i = 0; i < len; i++) {
+          bytes[i] = binary_string.charCodeAt(i);
+      }
+      return bytes.buffer;
+    }
 
-   
+    var BASE64_MARKER = ';base64,';
+
+    function convertDataURIToBinary(dataURI) {
+      console.log("udcncc");
+      var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+      var base64 = dataURI.substring(base64Index);
+      var raw = window.atob(base64);
+      var rawLength = raw.length;
+      var array = new Uint8Array(new ArrayBuffer(rawLength));
+
+      for(i = 0; i < rawLength; i++) {
+        array[i] = raw.charCodeAt(i);
+      }
+      return array;
+    }
+
+    function arrayAverage(arr){
+    //Find the sum
+      var sum = 0;
+      for(var i in arr) {
+          sum += arr[i];
+      }
+      //Get the length of the array
+      var numbersCnt = arr.length;
+      //Return the average / mean.
+      return (sum / numbersCnt);
+    }
+
+    var timeleft = 10;
+    var downloadTimer = setInterval(function(){
+      if(timeleft <= 0){
+        clearInterval(downloadTimer);
+        $(document).ready(function() {
+          $('#snap').click();
+        });
+      }
+      document.getElementById("progressBar").value = 10 - timeleft;
+      timeleft -= 1;
+    }, 1000);
+    
+    // setInterval(function() {
+    //   $(document).ready(function() {
+    //       $('#snap').click();
+    //   });
+    // }, 5000); // Wait 1000ms before running again
+    
+
 
 </script>
