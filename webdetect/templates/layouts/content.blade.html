@@ -4,21 +4,23 @@
 <div class="container-fluid">
     <div class="row">
       <center>
+
       <div class="col">
         <video id="video" width="480" height="360" autoplay></video>
         <br>
         <center><button id="snap">Snap Photo</button></center>
         <progress value="0" max="10" id="progressBar"></progress>
-        
-
       </div>
+
       <div class="col">
         <canvas id="canvas" width="480" height="360"></canvas>
       </div>
+
       <div class="col">
         <canvas1 id="results"></canvas1>
         <h3 id="identify-score"></h3>
       </div>
+
     </center> 
     </div>
 </div>
@@ -36,6 +38,7 @@
     var video = document.getElementById('video');
     var data = null;
     var array = [];
+    var array_stop = [];
     // Get access to the camera!
     if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         // Not adding { audio: true } since we only want video now
@@ -61,23 +64,32 @@
     function decisionAvgImage(avg_current, img_file) {
       console.log("siddd",avg_current);
       var avg_older = arrayAverage(array);
+      //var avg_stop = arrayAverage(array_stop);
       var start_period = Math.abs(avg_older - 0.75);
       var end_period = Math.abs(avg_older + 0.75);
 
-      if ((avg_current >= start_period) && (avg_current <= end_period)) {
+      // if ((avg_current >= start_period) && (avg_current <= end_period)) {
+      if ((avg_current >= end_period)) {
         // $(document).ready(function() {
         //   $('#snap').click();
         // });
-        console.log("NOOOOOOOOO SNAP TOGETHER")
+        array.push(avg_current);
+        console.log("list :",array);
+        //console.log("NOOOOOOOOO SNAP TOGETHER")
       }
       else {
-        sentImageToDetect(img_file); 
-        alert("PENDING RESPONSEEEEEEEEE")
-        
+        if ((array_stop.length) == 3) {
+          sentImageToDetect(img_file); 
+          //alert("PENDING RESPONSEEEEEEEEE");
+          array_stop = [];
+        }
+        else {
+          array_stop.push(avg_current);
+        }
+  
       }
-
-      array.push(avg_current);
-      console.log("list :",array);
+      // array.push(avg_current);
+      // console.log("list :",array);
       
     }
 
@@ -91,8 +103,8 @@
         
         formData.append("image", file );
         //console.log("formData",formData);
-        fetch('http://127.0.0.1:5000/api/working/image-detect', {
-        //fetch('http://riorocker97.com/api/detect', {
+        //fetch('http://127.0.0.1:5000/api/working/image-detect', {
+        fetch('http://riorocker97.com/api/detect', {
             method: "POST", 
             body: formData
         }).then(response => response.json())
@@ -178,7 +190,7 @@
       $(document).ready(function() {
           $('#snap').click();
       });
-    }, 5000); // Wait 1000ms before running again
+    }, 3000); // Wait 1000ms before running again
 
 
 
